@@ -7,6 +7,7 @@ export default function CheckEmail() {
   const initialEmail = location.state?.email || "";
 
   const [email, setEmail] = useState(initialEmail);
+  const [verificationUrl, setVerificationUrl] = useState(location.state?.verificationUrl || "");
   const [resending, setResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState("");
   const [resendError, setResendError] = useState("");
@@ -34,10 +35,13 @@ export default function CheckEmail() {
 
     try {
       const res = await authApi.resendVerification(email.trim());
+      if (res.verification_url) {
+        setVerificationUrl(res.verification_url);
+      }
       setResendSuccess(
-        res.message || `Verification link sent! Please check ${email.trim()} (and spam folder).`
+        res.message || `Verification link generated! Check ${email.trim()} or click below.`
       );
-      setCooldown(45); // 45 seconds cooldown to prevent spamming
+      setCooldown(30); // 30 seconds cooldown
     } catch (err) {
       setResendError(err.message || "Failed to resend verification email. Please try again.");
     } finally {
@@ -121,6 +125,25 @@ export default function CheckEmail() {
                 <span className="font-bold">Notice:</span>
                 <span>{resendError}</span>
               </div>
+            </div>
+          )}
+
+          {/* Instant Verification Shortcut */}
+          {verificationUrl && (
+            <div className="mt-5 rounded-xl border border-emerald-500/40 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/30 p-4 text-center shadow-sm">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                <span>⚡</span>
+                <span>Instant Verification Link</span>
+              </div>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+                Click below to activate your account and open your dashboard immediately:
+              </p>
+              <a
+                href={verificationUrl}
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 active:scale-[0.99] transition"
+              >
+                <span>✓ Verify My Email & Open Dashboard</span>
+              </a>
             </div>
           )}
 

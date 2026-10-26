@@ -56,6 +56,9 @@ export default function Signup() {
       navigate("/check-email", {
         state: {
           email: targetEmail,
+          verificationUrl: data?.verification_url,
+          emailSent: data?.email_sent,
+          message: data?.message,
         },
       });
     } catch (err) {
