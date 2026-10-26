@@ -53,11 +53,15 @@ export default function Signup() {
         password,
         full_name: fullName.trim(),
       });
-      navigate("/check-email", {
-        state: {
-          email: targetEmail,
-        },
-      });
+      if (data?.tokens?.access) {
+        navigate("/");
+      } else {
+        navigate("/check-email", {
+          state: {
+            email: targetEmail,
+          },
+        });
+      }
     } catch (err) {
       setError(err.message || "Failed to create account. Please try again.");
       setLoading(false);
