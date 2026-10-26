@@ -1,4 +1,9 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+const API_BASE_URL =
+  (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes("<YOUR-RENDER-BACKEND-URL>"))
+    ? import.meta.env.VITE_API_URL
+    : (import.meta.env.PROD
+        ? "https://expense-tracker-backend-fxs4.onrender.com/api"
+        : "http://localhost:8000/api");
 
 function extractFriendlyErrorMessage(errorData, status) {
   if (typeof errorData === "string" && errorData.trim()) {
